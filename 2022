@@ -1,0 +1,82 @@
+.386
+.model flat,c
+.data
+MAT dword 22,1
+	dword 5,3
+	dword 11,18
+	dword 13,19
+	dword 12,12
+	dword 8,9
+N dword 6
+NIZ dword ?
+maxel dword ?
+brel dword 0
+
+.stack 4096
+.code
+max PROC
+
+push ebp
+;mov ebp,esp ; ebp
+PUSHFD
+push esi
+push ebx
+push eax
+push ecx
+
+
+cmp edi,edx
+ja vece
+cmp edi,edx
+jb manje
+mov eax,0
+jmp dalje
+vece:
+mov eax,edi
+jmp dalje
+manje:
+mov eax,edx
+dalje:
+
+mov esi,offset maxel ; adr maxel
+mov [esi],eax ; max ide u maxel
+
+pop ecx
+pop eax
+pop ebx
+pop esi
+POPFD ; skida flagove sa steka
+
+
+ret
+max endp
+
+main PROC
+
+mov ebx,0
+mov ecx,N
+
+
+petlja:
+
+mov esi,0
+mov edi,MAT[ebx][esi]
+mov edx,MAT[ebx][esi+4]
+push offset maxel ; po adr izl parametar
+call max
+
+mov eax,maxel
+cmp eax,0
+je dole
+mov edi,brel
+mov NIZ[edi],eax
+inc brel
+dole:
+
+
+add ebx,8 ; korak
+loop petlja
+
+ret
+main endp
+end main
