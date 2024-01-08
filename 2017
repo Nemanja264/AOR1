@@ -1,0 +1,100 @@
+.386
+.model flat,c
+.data
+
+asc byte 'Ovo je jedna rec a ovo je druga@'
+
+.stack 4096
+
+.code
+znak proc
+pushfd
+push ebx
+push edx
+push ecx
+push edi
+push esi
+
+; malo slovo - 0
+; veliko slovo - 1
+; @- 2
+; _ - 3
+; drugi znak - 4
+
+cmp al,'a'
+jb blanko
+cmp al,'z'
+jbe malo
+cmp al,'A'
+jb blanko
+cmp al,'Z'
+jbe veliko
+
+blanko:
+cmp al,' '
+jne majmunce
+mov al,3
+jmp kraj
+
+majmunce:
+cmp al,'@'
+jne drugi
+mov al,2
+jmp kraj
+drugi:
+mov al,4
+jmp kraj
+malo:
+mov al,0
+jmp kraj
+veliko:
+mov al,1
+kraj:
+
+
+pop esi
+pop edi
+pop ecx
+pop edx
+pop ebx
+popfd
+ret
+znak endp
+
+main proc
+mov edx,-1
+
+petlja:
+inc edx
+mov al,asc[edx]
+call znak
+
+cmp al,2
+je kraj_recenice
+cmp al,3 ; _
+je petlja
+cmp al,0 
+jne petlja ; ako nije malo slovo
+mov bl,asc[edx-1]
+cmp bl,' '
+je pre ; ako je blanko pre malog slova
+mov bl,asc[edx+1] ; posto nije blanko pre malog slova idemo na posle malog slova
+cmp bl,' '
+jne petlja ; ako nije blanko posle malog slova
+mov cl, asc[edx]
+sub cl,32
+mov asc[edx],cl
+jmp petlja
+pre:
+mov cl, asc[edx]
+sub cl,32
+mov asc[edx],cl
+jmp petlja
+kraj_recenice:
+mov cl, asc[edx-1]
+sub cl,32
+mov asc[edx-1],cl
+
+ret
+main endp
+end main
