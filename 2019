@@ -1,0 +1,62 @@
+.386
+.model flat,c
+.data
+MAT word 1, 2, 3, 4
+ word 5, 6, 7, 8
+ word 9, 10, 11, 12
+ word 13, 14, 15, 16
+N byte 4
+BROJ byte 2
+NIZ word ?
+M word ?
+.code
+main proc
+
+
+mov esi,0
+mov dl,1 ; index vrste
+mov dh,1 ; index kolone
+mov edi,0
+movzx ecx,N
+
+
+spoljasnja:
+mov al,0
+mov dl,1
+mov ebx,0
+
+unutrasnja:
+
+cmp dh,dl
+ja vece; if dh>dl
+mov ah,dl
+sub ah,dh ; dl-dh
+jmp ubaci
+vece:
+mov ah,dh
+sub ah,dl ; dh-dl
+
+ubaci:
+cmp ah,BROJ
+jne dalje
+mov bp,mat[ebx][esi]
+mov niz[edi],bp
+inc edi
+dalje:
+
+add bl,N
+add bl,N ; ebx+=8
+inc dl ; index vrste
+inc al
+cmp al,N ; broj prolaza kroz unutrasnju petlju
+jb unutrasnja
+
+add esi,2
+inc dh ; index kolone
+loop spoljasnja
+
+mov M,di
+
+ret
+main endp
+end main
