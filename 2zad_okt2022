@@ -1,0 +1,74 @@
+.386
+.model flat,c
+.data
+mat dword 1,2,6,100
+	dword 8,10,19,10
+	dword 1,4,2,199
+	dword 66,24,1,42
+n dword 4
+rez dword ?
+
+.code
+suma proc
+push ebp
+mov ebp,esp
+pushfd
+pushad
+
+mov esi,[ebp+12] ; adr niza // tj vrste u ovom slucaju
+mov ecx,[ebp+8] ; n
+xor eax,eax ; suma ide ovde
+
+sumaNiza:
+
+add eax,[esi] ; sumiranje elemenata niza
+
+add esi,4 ; sledeci element niza // tj vrste u ovom slucaju
+loop sumaNiza
+
+mov [ebp+12],eax ; stavljamo sumu na dno steka
+
+popad
+popfd
+pop ebp
+ret 4 ; skidamo eip i jos 4 bajta sa steka // ostaje samo suma na dnu
+suma endp
+
+main proc
+mov ebx,0
+mov ecx,n
+dec ecx ; br prolazaka kroz petlju // 1 manje jer vec izracunavamo sumu prve vrste pre petlje
+mov esi,n
+shl esi,2 ; 4n sledeca vrsta matrice
+
+lea eax,mat[ebx] ; adr prve vrste
+push eax
+push n
+call suma
+pop edx ; suma prve vrste
+mov edi,1 ; prva vrsta
+mov rez,edi ; prva vrsta u rez
+add ebx,esi ; sledeca vrsta
+
+petlja:
+
+lea eax,mat[ebx] ; adr vrste
+push eax
+push n ; dimenzija matrice // tj brel vrste // tj brel niza
+call suma
+pop eax ; skidamo sumu vrste sa steka
+inc edi ; br vrste
+
+cmp edx,eax ; najm_suma > suma_vrste
+jle dalje ; oznaceni brojevi
+mov edx,eax ; najmanja suma vrste
+mov rez,edi ; br najmanje vrste
+dalje:
+
+add ebx,esi ; sledeca vrsta
+loop petlja
+
+ret
+main endp
+end main
+	
