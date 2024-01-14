@@ -8,6 +8,7 @@ mat dword 1,2,6,100
 n dword 4
 rez dword ?
 
+.stack 4096
 .code
 suma proc
 push ebp
