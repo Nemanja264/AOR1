@@ -1,0 +1,32 @@
+.386
+.model flat,c
+.data
+niz dword 1,2,0,0,7,8,0,9,0,10
+n dword 10
+zbir dword ?
+.code
+main proc
+xor esi,esi ; za prolazak kroz niz
+mov ecx,n ; n
+dec ecx ; n-1
+xor ebx,ebx
+
+petlja:
+mov eax,niz[esi]
+
+cmp eax,0 ; niz[i] == 0
+jne dalje
+
+mov edx,niz[esi+4] ; element iza nule
+add ebx,edx ; sumiranje elemenata koji se nalaze iza elemenata sa vrednoscu nula
+
+dalje:
+
+add esi,4
+loop petlja
+
+mov zbir,ebx
+
+ret
+main endp
+end main
